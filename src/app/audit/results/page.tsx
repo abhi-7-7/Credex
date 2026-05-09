@@ -6,7 +6,7 @@ import { TrendingDown, Mail, CheckCircle, ExternalLink, Zap, ArrowLeft, Copy } f
 import Link from "next/link";
 import type { AuditResult } from "@/types/audit";
 
-const LABELS: Record<string,string> = { cursor:"Cursor", copilot:"Copilot", claude_sub:"Claude", chatgpt_sub:"ChatGPT", gemini:"Gemini", openai_api:"OpenAI API", anthropic_api:"Anthropic API" };
+const LABELS: Record<string,string> = { cursor:"Cursor", copilot:"Copilot", claude_sub:"Claude", chatgpt_sub:"ChatGPT", gemini:"Gemini", openai_api:"OpenAI API", anthropic_api:"Anthropic API", windsurf:"Windsurf" };
 const COLORS = ["#0052FF", "#3f4f65", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 const CONF   = { high:"text-emerald-700 bg-emerald-50 border border-emerald-200", medium:"text-yellow-700 bg-yellow-50 border border-yellow-200", low:"text-slate-600 bg-slate-50 border border-slate-200" } as const;
 

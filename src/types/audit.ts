@@ -5,7 +5,8 @@ export type ToolId =
   | "chatgpt_sub"
   | "gemini"
   | "openai_api"
-  | "groq_api";
+  | "anthropic_api"
+  | "windsurf";
 
 export type UseCase =
   | "code_completion"

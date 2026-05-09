@@ -58,7 +58,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           {[
             { val: "$2,400+", label: "Average annual savings per startup" },
-            { val: "7 tools", label: "Cursor · Copilot · Claude · ChatGPT · Gemini · APIs" },
+            { val: "8 tools", label: "Cursor · Copilot · Claude · ChatGPT · Gemini · Windsurf · APIs" },
             { val: "100%", label: "Logic-based · verified against official pricing" },
           ].map((s) => (
             <div key={s.val}>
