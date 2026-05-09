@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Credex AI Spend Audit
 
-## Getting Started
+> Find out exactly how much your startup is overspending on AI tools — in 2 minutes.
 
-First, run the development server:
+**Live URL:** https://credex-audit.vercel.app *(replace after deploy)*
+**Stack:** Next.js 14 · TypeScript · Tailwind CSS · Supabase · Groq API
+
+---
+
+## What it does
+
+Startups spend thousands per month on AI tools — often on plans that are two tiers
+too expensive, models overkill for the task, or features already paid for elsewhere.
+
+This app takes your current AI spend (tool, plan, seats, monthly cost) and runs it
+through a rules-based audit engine that surfaces specific, finance-defensible savings.
+
+Every recommendation links to an official pricing page. Every number is verifiable.
+
+---
+
+## MVP features
+
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | Spend input form (Cursor, Copilot, ChatGPT, Claude, Gemini, OpenAI API, Anthropic API) | ✅ |
+| 2 | Audit engine — logic-based, no AI, all sources cited | ✅ |
+| 3 | Results dashboard with hero savings number | ✅ |
+| 4 | AI-generated 100-word summary via Groq API | ✅ |
+| 5 | Email capture → Supabase storage → transactional email | ✅ |
+| 6 | Shareable URL with Open Graph preview | ✅ |
+
+---
+
+## Running locally
 
 ```bash
+# 1. Clone and install
+git clone https://github.com/your-username/credex-audit
+cd credex-audit
+npm install
+
+# 2. Set environment variables
+cp .env.example .env.local
+# Fill in: ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_ANON_KEY, RESEND_API_KEY
+
+# 3. Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# → http://localhost:3000
+
+# 4. Run tests
+npm test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running tests
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm test              # run once
+npm run test:watch    # watch mode
+npm run test:coverage # coverage report
+```
 
-## Learn More
+Tests live in `__tests__/audit-engine.test.ts`.
+14 tests covering: Cursor, Copilot, OpenAI API, Anthropic API, consolidation logic, and aggregates.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+# Groq API (for AI summary generation)
+ANTHROPIC_API_KEY=sk-ant-...
 
-## Deploy on Vercel
+# Supabase (lead storage + audit snapshots)
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_ANON_KEY=eyJh...
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Resend (transactional email)
+RESEND_API_KEY=re_...
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Public app URL (for OG tags and shareable URLs)
+NEXT_PUBLIC_APP_URL=https://credex-audit.vercel.app
+```
+
+---
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── page.tsx              # Landing page with spend form
+│   ├── audit/page.tsx        # Multi-step audit form
+│   ├── results/page.tsx      # Results dashboard
+│   ├── api/
+│   │   ├── audit/route.ts    # Runs audit engine, returns AuditResult
+│   │   ├── leads/route.ts    # Stores email + audit snapshot
+│   │   └── share/route.ts    # Returns audit by shareable slug
+├── lib/
+│   ├── audit/
+│   │   ├── engine.ts         # Core audit logic (pure functions)
+│   │   └── pricing-data.ts   # All pricing constants with sources
+│   ├── db/                   # Supabase client + queries
+│   └── email/                # Resend transactional templates
+├── components/
+│   ├── audit/                # Form step components
+│   └── dashboard/            # Results visualization components
+└── types/index.ts            # Shared TypeScript types
+```
+
+---
+
+## Repository files
+
+| File | Purpose |
+|------|---------|
+| `README.md` | This file |
+| `ARCHITECTURE.md` | System diagrams and design decisions |
+| `DEVLOG.md` | 7-day build diary |
+| `TESTS.md` | What each test covers and why |
+| `PRICING_DATA.md` | Verified pricing with official sources |
+| `PROMPTS.md` | Full AI summary prompt strings |
+| `GTM.md` | Go-to-market strategy |
+| `ECONOMICS.md` | Unit economics for Credex |
+| `REFLECTION.md` | Post-build analysis |
+| `USER_INTERVIEWS.md` | Notes from 3 user conversations |
+| `LANDING_COPY.md` | All user-facing copy |
+| `METRICS.md` | North Star metric and targets |
+
+---
+
+## Lighthouse scores (mobile)
+
+| Category | Target | Score |
+|----------|--------|-------|
+| Performance | ≥ 85 | *run after deploy* |
+| Accessibility | ≥ 90 | *run after deploy* |
+| Best Practices | ≥ 90 | *run after deploy* |
+
+---
+
+## Built for
+
+Credex — 7-day entrepreneurial build challenge.
+Submission deadline: Day 7.

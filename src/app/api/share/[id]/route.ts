@@ -9,6 +9,8 @@ export async function GET(
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return NextResponse.json({ error: "Storage unavailable" }, { status: 503 });
 
+  try { new URL(url); } catch { return NextResponse.json({ error: "Storage unavailable" }, { status: 503 }); }
+
   const resolvedParams = await params;
   const db = createClient(url, key);
   const { data, error } = await db
