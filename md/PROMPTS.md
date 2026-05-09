@@ -49,7 +49,7 @@ The user message is self-contained with role, task, and constraints. A system pr
 Bullets make the AI summary feel like a repeat of the recommendation cards already shown on the results page. A paragraph creates a different register — more like a CFO reading a memo — which differentiates the AI summary section visually and contextually.
 
 ### Fallback behaviour
-If the API call fails (network, rate limit, or invalid key), the route falls back to a deterministic template string constructed from the audit result data. This ensures the results page always renders, even without a valid `ANTHROPIC_API_KEY`.
+If the API call fails (network, rate limit, or invalid key), the route falls back to a deterministic template string constructed from the audit result data. This ensures the results page always renders, even without a valid `GROQ_API_KEY`.
 
 ```typescript
 // Fallback template (from route.ts)

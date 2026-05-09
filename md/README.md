@@ -3,7 +3,7 @@
 > Find out exactly how much your startup is overspending on AI tools — in 2 minutes.
 
 **Live URL:** https://credex-audit.vercel.app *(replace after deploy)*
-**Stack:** Next.js 14 · TypeScript · Tailwind CSS · Supabase · Anthropic API
+**Stack:** Next.js 14 · TypeScript · Tailwind CSS · Supabase · Groq API
 
 ---
 
@@ -26,7 +26,7 @@ Every recommendation links to an official pricing page. Every number is verifiab
 | 1 | Spend input form (Cursor, Copilot, ChatGPT, Claude, Gemini, OpenAI API, Anthropic API) | ✅ |
 | 2 | Audit engine — logic-based, no AI, all sources cited | ✅ |
 | 3 | Results dashboard with hero savings number | ✅ |
-| 4 | AI-generated 100-word summary via Anthropic API | ✅ |
+| 4 | AI-generated 100-word summary via Groq API | ✅ |
 | 5 | Email capture → Supabase storage → transactional email | ✅ |
 | 6 | Shareable URL with Open Graph preview | ✅ |
 
@@ -42,7 +42,7 @@ npm install
 
 # 2. Set environment variables
 cp .env.example .env.local
-# Fill in: ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_ANON_KEY, RESEND_API_KEY
+# Fill in: GROQ_API_KEY, SUPABASE_URL, SUPABASE_ANON_KEY, RESEND_API_KEY
 
 # 3. Start dev server
 npm run dev
@@ -70,8 +70,8 @@ Tests live in `__tests__/audit-engine.test.ts`.
 ## Environment variables
 
 ```env
-# Anthropic API (for AI summary generation)
-ANTHROPIC_API_KEY=sk-ant-...
+# Groq API (for AI summary generation)
+GROQ_API_KEY=gsk_...
 
 # Supabase (lead storage + audit snapshots)
 SUPABASE_URL=https://xxx.supabase.co
