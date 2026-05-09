@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Zap, ChevronDown, ChevronUp, AlertCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,8 +11,9 @@ const TOOLS = [
   { id: "claude_sub"    as ToolId, name: "Claude (subscription)",   emoji: "🔶", hint: "Anthropic Pro / Team plans",  isApi: false },
   { id: "chatgpt_sub"   as ToolId, name: "ChatGPT",                 emoji: "🟢", hint: "OpenAI Plus / Team plans",    isApi: false },
   { id: "gemini"        as ToolId, name: "Gemini",                  emoji: "💎", hint: "Google AI assistant",         isApi: false },
+  { id: "windsurf"      as ToolId, name: "Windsurf",                emoji: "🌊", hint: "AI IDE by Codeium",           isApi: false },
   { id: "openai_api"    as ToolId, name: "OpenAI API",              emoji: "⚡", hint: "Billed per token",            isApi: true  },
-  { id: "groq_api"      as ToolId, name: "Groq API",                emoji: "🚀", hint: "Llama, Mixtral, etc. billed per token",isApi: true  },
+  { id: "anthropic_api" as ToolId, name: "Anthropic API",           emoji: "🔶", hint: "Claude API, billed per token", isApi: true  },
 ];
 
 const PLANS: Record<string, { value: string; label: string }[]> = {
@@ -21,11 +22,12 @@ const PLANS: Record<string, { value: string; label: string }[]> = {
   claude_sub: [{ value:"pro", label:"Pro – $20/seat" },{ value:"team", label:"Team – $30/seat" },{ value:"enterprise", label:"Enterprise – Custom" }],
   chatgpt_sub:[{ value:"plus", label:"Plus – $20/seat" },{ value:"team", label:"Team – $30/seat" },{ value:"enterprise", label:"Enterprise – Custom" }],
   gemini:     [{ value:"free", label:"Free" },{ value:"google_one_ai", label:"Google One AI Premium – $19.99/mo" },{ value:"workspace", label:"Workspace AI add-on – ~$30/seat" }],
+  windsurf:   [{ value:"free", label:"Free" },{ value:"pro", label:"Pro – $15/seat" },{ value:"team", label:"Team – $35/seat" }],
 };
 
 const MODELS: Record<string, { value: string; label: string }[]> = {
   openai_api:    [{ value:"gpt-4o", label:"GPT-4o" },{ value:"gpt-4o-mini", label:"GPT-4o mini" },{ value:"gpt-4-turbo", label:"GPT-4 Turbo" },{ value:"gpt-3.5-turbo", label:"GPT-3.5 Turbo" }],
-  groq_api:      [{ value:"llama-3.3-70b", label:"Llama 3.3 70B" },{ value:"mixtral-8x7b", label:"Mixtral 8x7B" },{ value:"gemma-7b", label:"Gemma 7B" }],
+  anthropic_api: [{ value:"claude-opus-4", label:"Claude Opus 4" },{ value:"claude-sonnet-4", label:"Claude Sonnet 4" },{ value:"claude-haiku-4", label:"Claude Haiku 4" }],
 };
 
 const USE_CASES: { value: UseCase; label: string }[] = [
@@ -36,18 +38,36 @@ const USE_CASES: { value: UseCase; label: string }[] = [
   { value:"complex_reasoning",  label:"Complex reasoning / analysis" },
 ];
 
+const STORAGE_KEY = "credex_audit_form";
+
 function mkEntry(toolId: ToolId): ToolEntry {
   return { toolId, enabled:false, plan:PLANS[toolId]?.[1]?.value, seats:1, monthlySpend:0, model:MODELS[toolId]?.[0]?.value, useCase:undefined, usingBatchApi:false, usingPromptCaching:false };
+}
+
+function loadSavedEntries(): Record<ToolId, ToolEntry> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
 }
 
 export default function AuditPage() {
   const router = useRouter();
   const [entries, setEntries] = useState<Record<ToolId, ToolEntry>>(
-    () => Object.fromEntries(TOOLS.map(t => [t.id, mkEntry(t.id)])) as Record<ToolId, ToolEntry>
+    () => loadSavedEntries() ?? Object.fromEntries(TOOLS.map(t => [t.id, mkEntry(t.id)])) as Record<ToolId, ToolEntry>
   );
   const [expanded, setExpanded] = useState<ToolId | null>(null);
   const [loading, setLoading]   = useState(false);
   const [error,   setError]     = useState<string | null>(null);
+
+  // Persist form state across page reloads
+  const saveEntries = useCallback((e: Record<ToolId, ToolEntry>) => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(e)); } catch { /* quota exceeded — ignore */ }
+  }, []);
+
+  useEffect(() => { saveEntries(entries); }, [entries, saveEntries]);
 
   const activeCount = Object.values(entries).filter(e => e.enabled).length;
 
@@ -157,7 +177,7 @@ export default function AuditPage() {
                             <span className="text-[14px] text-brand-text font-medium">Already using Batch API (50% discount)</span>
                           </label>
                         )}
-                        {tool.id === "groq_api" && (
+                        {tool.id === "anthropic_api" && (
                           <label className="col-span-2 flex items-center gap-3 cursor-pointer">
                             <input type="checkbox" className="accent-brand-blue w-4 h-4" checked={e.usingPromptCaching??false}
                               onChange={ev => upd(tool.id,"usingPromptCaching",ev.target.checked)} />
@@ -186,8 +206,8 @@ export default function AuditPage() {
 
         {/* Error Popup */}
         {error && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-[2px] animate-in fade-in duration-200">
-            <div className="bg-brand-surface rounded-xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] w-full max-w-md p-6 border border-brand-border animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-[2px]">
+            <div className="bg-brand-surface rounded-xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] w-full max-w-md p-6 border border-brand-border">
               <div className="flex justify-between items-start mb-4">
                 <div className="w-10 h-10 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-red-600">
                   <AlertCircle size={20} />
@@ -210,7 +230,7 @@ export default function AuditPage() {
                   ) : (
                     <>
                       <li>Check your internet connection and verify you aren&apos;t offline.</li>
-                      <li>Ensure your <code className="bg-slate-200 px-1 py-0.5 rounded text-brand-text">GROQ_API_KEY</code> is properly configured in your <code className="bg-slate-200 px-1 py-0.5 rounded text-brand-text">.env.local</code> file.</li>
+                      <li>Ensure your <code className="bg-slate-200 px-1 py-0.5 rounded text-brand-text">ANTHROPIC_API_KEY</code> is properly configured in your <code className="bg-slate-200 px-1 py-0.5 rounded text-brand-text">.env.local</code> file.</li>
                       <li>Try submitting the audit form again.</li>
                     </>
                   )}
