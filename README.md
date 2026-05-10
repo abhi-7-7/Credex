@@ -62,8 +62,8 @@ npm run test:watch    # watch mode
 npm run test:coverage # coverage report
 ```
 
-Tests live in `__tests__/audit-engine.test.ts`.
-14 tests covering: Cursor, Copilot, OpenAI API, Anthropic API, consolidation logic, and aggregates.
+Tests live in `src/__tests__/auditEngine.test.ts`.
+23 tests covering: Cursor, Copilot, OpenAI API, Anthropic API, Windsurf, consolidation logic, and aggregates.
 
 ---
 
@@ -93,21 +93,18 @@ src/
 ├── app/
 │   ├── page.tsx              # Landing page with spend form
 │   ├── audit/page.tsx        # Multi-step audit form
-│   ├── results/page.tsx      # Results dashboard
+│   ├── audit/results/page.tsx # Results dashboard
 │   ├── api/
-│   │   ├── audit/route.ts    # Runs audit engine, returns AuditResult
-│   │   ├── leads/route.ts    # Stores email + audit snapshot
-│   │   └── share/route.ts    # Returns audit by shareable slug
+│   │   ├── audit-summary/route.ts # Returns AI summary
+│   │   ├── capture-lead/route.ts  # Stores email + audit snapshot
+│   │   └── share/[id]/route.ts    # Returns audit by shareable slug
 ├── lib/
-│   ├── audit/
-│   │   ├── engine.ts         # Core audit logic (pure functions)
-│   │   └── pricing-data.ts   # All pricing constants with sources
-│   ├── db/                   # Supabase client + queries
-│   └── email/                # Resend transactional templates
-├── components/
-│   ├── audit/                # Form step components
-│   └── dashboard/            # Results visualization components
-└── types/index.ts            # Shared TypeScript types
+│   ├── auditEngine.ts        # Core audit logic + pricing constants
+│   └── utils.ts              # UI utilities
+├── types/
+│   └── audit.ts              # Shared TypeScript types
+└── __tests__/
+    └── auditEngine.test.ts   # Vitest unit tests
 ```
 
 ---
@@ -117,17 +114,17 @@ src/
 | File | Purpose |
 |------|---------|
 | `README.md` | This file |
-| `ARCHITECTURE.md` | System diagrams and design decisions |
-| `DEVLOG.md` | 7-day build diary |
-| `TESTS.md` | What each test covers and why |
-| `PRICING_DATA.md` | Verified pricing with official sources |
-| `PROMPTS.md` | Full AI summary prompt strings |
-| `GTM.md` | Go-to-market strategy |
-| `ECONOMICS.md` | Unit economics for Credex |
-| `REFLECTION.md` | Post-build analysis |
-| `USER_INTERVIEWS.md` | Notes from 3 user conversations |
-| `LANDING_COPY.md` | All user-facing copy |
-| `METRICS.md` | North Star metric and targets |
+| `docs/ARCHITECTURE.md` | System diagrams and design decisions |
+| `docs/DEVLOG.md` | 7-day build diary |
+| `docs/TESTS.md` | What each test covers and why |
+| `docs/PRICING_DATA.md` | Verified pricing with official sources |
+| `docs/PROMPTS.md` | Full AI summary prompt strings |
+| `docs/GTM.md` | Go-to-market strategy |
+| `docs/ECONOMICS.md` | Unit economics for Credex |
+| `docs/REFLECTION.md` | Post-build analysis |
+| `docs/USER_INTERVIEWS.md` | Notes from 3 user conversations |
+| `docs/LANDING_COPY.md` | All user-facing copy |
+| `docs/METRICS.md` | North Star metric and targets |
 
 ---
 
