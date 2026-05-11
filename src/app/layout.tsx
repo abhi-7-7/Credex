@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   description:
     "Free audit tool for startups. Enter your AI tool subscriptions and get a personalised savings report in 60 seconds.",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
+    process.env.NEXT_PUBLIC_BASE_URL || 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
   ),
   openGraph: {
     title: "AI Spend Audit",
